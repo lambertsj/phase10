@@ -62,6 +62,7 @@ export default function Home() {
         </div>
         {players.map((player, index) => (
           <div key={index}>
+          Name:
             <input
               type="text"
               placeholder={`Player ${index + 1} nickname`}
