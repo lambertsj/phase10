@@ -5,6 +5,7 @@ export default function Game() {
   const router = useRouter();
   const [players, setPlayers] = useState([]);
   const [playerData, setPlayerData] = useState({});
+  const [currentDealer, setCurrentDealer] = useState(null);
 
   useEffect(() => {
     const storedPlayers = JSON.parse(localStorage.getItem('players') || '[]');
@@ -15,6 +16,7 @@ export default function Game() {
       return acc;
     }, {});
     setPlayerData(initialPlayerData);
+    setCurrentDealer(localStorage.getItem('currentDealer') || null);
   }, []);
 
   const updatePlayerData = (player, field, value) => {
@@ -29,6 +31,11 @@ export default function Game() {
       localStorage.setItem('playerData', JSON.stringify(newData));
       return newData;
     });
+  };
+
+  const setDealer = (player) => {
+    setCurrentDealer(player);
+    localStorage.setItem('currentDealer', player);
   };
 
   const PhaseButtons = ({ player }) => {
@@ -58,9 +65,30 @@ export default function Game() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-md">
       <h1 className="text-2xl font-bold mb-6 text-center">Phase 10 Scorekeeper</h1>
+      <div className="mb-6">
+        <h2 className="text-xl font-bold mb-2">Current Dealer</h2>
+        <div className="flex flex-wrap gap-2">
+          {players.map((player) => (
+            <button
+              key={player}
+              onClick={() => setDealer(player)}
+              className={`px-3 py-1 rounded ${
+                currentDealer === player
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-200 text-gray-800'
+              }`}
+            >
+              {player}
+            </button>
+          ))}
+        </div>
+      </div>
       {players.map((player) => (
         <div key={player} className="mb-8 p-4 border rounded shadow">
-          <h2 className="text-xl font-bold mb-2 text-center">{player}</h2>
+          <h2 className="text-xl font-bold mb-2 text-center">
+            {player}
+            {currentDealer === player && ' (Dealer)'}
+          </h2>
           <PhaseButtons player={player} />
           <div className="flex items-center justify-between mb-4">
             <span className="text-lg">Current Phase:</span>
